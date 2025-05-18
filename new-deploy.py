@@ -64,7 +64,7 @@ if "questions" not in st.session_state:
     st.session_state.questions = []
     for dichotomy, questions in question_pool.items():
         q_copy = questions.copy()
-        random.shuffle(q_copy)  # Acak pertanyaan
+        random.shuffle(q_copy)
         for q in q_copy:
             st.session_state.questions.append((dichotomy, q))
     random.shuffle(st.session_state.questions)
@@ -75,30 +75,22 @@ if "current" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-def on_answer_change():
-    pilihan = st.session_state.get("jawaban")
-    if pilihan is None:
-        return
-
-    dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
-
-    if pilihan == opt1:
-        st.session_state.scores[dichotomy[0]] += 1
-    else:
-        st.session_state.scores[dichotomy[1]] += 1
-
-    st.session_state.current += 1
-
-    if st.session_state.current >= len(st.session_state.questions):
-        st.session_state.finished = True
-    else:
-        st.session_state.jawaban = None
-
 st.title("Tes MBTI Interaktif")
 
 if not st.session_state.finished:
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
-    st.radio(f"**{question}**", options=[opt1, opt2], key="jawaban", on_change=on_answer_change)
+    st.markdown(f"**{question}**")
+    
+    col1, col2 = st.columns(2)
+    if col1.button(opt1):
+        st.session_state.scores[dichotomy[0]] += 1
+        st.session_state.current += 1
+    if col2.button(opt2):
+        st.session_state.scores[dichotomy[1]] += 1
+        st.session_state.current += 1
+    
+    if st.session_state.current >= len(st.session_state.questions):
+        st.session_state.finished = True
 else:
     st.success("Tes selesai!")
     mbti_result = get_mbti_type(st.session_state.scores)
