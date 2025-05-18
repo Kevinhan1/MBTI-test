@@ -3,48 +3,48 @@ import random
 
 question_pool = {
     'EI': [
-        ("Apakah Anda merasa berenergi setelah bersosialisasi dengan banyak orang?", "Ya, sangat berenergi", "Tidak, merasa lelah"),
-        ("Apakah Anda lebih suka berbicara di grup besar atau percakapan satu lawan satu?", "Grup besar", "Satu lawan satu"),
-        ("Apakah Anda biasanya memulai percakapan dengan orang asing?", "Ya", "Tidak"),
-        ("Apakah Anda lebih suka berada di tempat ramai daripada menyendiri?", "Ya", "Tidak"),
-        ("Apakah Anda menikmati menjadi pusat perhatian?", "Ya", "Tidak"),
-        ("Apakah Anda cenderung bertindak terlebih dahulu lalu berpikir, atau berpikir dulu lalu bertindak?", "Bertindak dahulu", "Berpikir dahulu"),
-        ("Ketika sendirian dalam waktu lama, apakah Anda merasa kesepian?", "Ya", "Tidak"),
-        ("Apakah Anda lebih sering berbicara atau mendengarkan dalam percakapan?", "Berbicara", "Mendengarkan"),
-        ("Apakah Anda lebih suka aktivitas kelompok daripada aktivitas individu?", "Kelompok", "Individu"),
+        ("Apakah Kamu merasa berenergi setelah bersosialisasi dengan banyak orang?", "Ya, sangat berenergi", "Tidak, merasa lelah"),
+        ("Apakah Kamu lebih suka berbicara di grup besar atau percakapan satu lawan satu?", "Grup besar", "Satu lawan satu"),
+        ("Apakah Kamu biasanya memulai percakapan dengan orang asing?", "Ya", "Tidak"),
+        ("Apakah Kamu lebih suka berada di tempat ramai daripada menyendiri?", "Ya", "Tidak"),
+        ("Apakah Kamu menikmati menjadi pusat perhatian?", "Ya", "Tidak"),
+        ("Apakah Kamu cenderung bertindak terlebih dahulu lalu berpikir, atau berpikir dulu lalu bertindak?", "Bertindak dahulu", "Berpikir dahulu"),
+        ("Ketika sendirian dalam waktu lama, apakah Kamu merasa kesepian?", "Ya", "Tidak"),
+        ("Apakah Kamu lebih sering berbicara atau mendengarkan dalam percakapan?", "Berbicara", "Mendengarkan"),
+        ("Apakah Kamu lebih suka aktivitas kelompok daripada aktivitas individu?", "Kelompok", "Individu"),
     ],
     'SN': [
-        ("Apakah Anda fokus pada detail atau gambaran besar?", "Detail", "Gambaran besar"),
-        ("Apakah Anda lebih suka informasi konkret atau ide abstrak?", "Konkret", "Abstrak"),
-        ("Apakah Anda cenderung memperhatikan fakta atau kemungkinan?", "Fakta", "Kemungkinan"),
-        ("Apakah Anda lebih suka instruksi langkah demi langkah atau eksplorasi bebas?", "Langkah demi langkah", "Eksplorasi bebas"),
-        ("Apakah Anda lebih tertarik pada apa yang nyata atau apa yang mungkin?", "Yang nyata", "Yang mungkin"),
-        ("Apakah Anda menikmati rutinitas atau variasi?", "Rutinitas", "Variasi"),
-        ("Apakah Anda memercayai hal yang bisa dibuktikan atau ide yang belum terbukti?", "Yang bisa dibuktikan", "Ide yang belum terbukti"),
-        ("Apakah Anda biasanya mendeskripsikan sesuatu secara literal atau menggunakan perbandingan/metafora?", "Literal", "Metafora"),
-        ("Apakah Anda lebih suka fakta atau teori?", "Fakta", "Teori"),
+        ("Apakah Kamu fokus pada detail atau gambaran besar?", "Detail", "Gambaran besar"),
+        ("Apakah Kamu lebih suka informasi konkret atau ide abstrak?", "Konkret", "Abstrak"),
+        ("Apakah Kamu cenderung memperhatikan fakta atau kemungkinan?", "Fakta", "Kemungkinan"),
+        ("Apakah Kamu lebih suka instruksi langkah demi langkah atau eksplorasi bebas?", "Langkah demi langkah", "Eksplorasi bebas"),
+        ("Apakah Kamu lebih tertarik pada apa yang nyata atau apa yang mungkin?", "Yang nyata", "Yang mungkin"),
+        ("Apakah Kamu menikmati rutinitas atau variasi?", "Rutinitas", "Variasi"),
+        ("Apakah Kamu memercayai hal yang bisa dibuktikan atau ide yang belum terbukti?", "Yang bisa dibuktikan", "Ide yang belum terbukti"),
+        ("Apakah Kamu biasanya mendeskripsikan sesuatu secara literal atau menggunakan perbandingan/metafora?", "Literal", "Metafora"),
+        ("Apakah Kamu lebih suka fakta atau teori?", "Fakta", "Teori"),
     ],
     'TF': [
-        ("Dalam membuat keputusan, apakah Anda lebih mengandalkan logika atau perasaan?", "Logika", "Perasaan"),
-        ("Apakah Anda lebih menghargai keadilan atau empati?", "Keadilan", "Empati"),
-        ("Apakah Anda merasa nyaman memberi kritik langsung?", "Ya", "Tidak"),
-        ("Apakah Anda lebih sering menyelesaikan konflik dengan debat atau dengan kompromi?", "Debat", "Kompromi"),
-        ("Apakah Anda merasa keputusan harus adil atau mempertimbangkan perasaan semua orang?", "Adil", "Pertimbangkan perasaan"),
-        ("Apakah Anda lebih sering berpikir objektif atau subjektif?", "Objektif", "Subjektif"),
-        ("Apakah Anda menilai diri Anda lebih rasional atau penuh empati?", "Rasional", "Penuh empati"),
-        ("Apakah Anda cenderung fokus pada hasil atau dampak emosional?", "Hasil", "Dampak emosional"),
-        ("Apakah Anda merasa nyaman membuat keputusan sulit tanpa terpengaruh emosi?", "Ya", "Tidak"),
+        ("Dalam membuat keputusan, apakah Kamu lebih mengKamulkan logika atau perasaan?", "Logika", "Perasaan"),
+        ("Apakah Kamu lebih menghargai keadilan atau empati?", "Keadilan", "Empati"),
+        ("Apakah Kamu merasa nyaman memberi kritik langsung?", "Ya", "Tidak"),
+        ("Apakah Kamu lebih sering menyelesaikan konflik dengan debat atau dengan kompromi?", "Debat", "Kompromi"),
+        ("Apakah Kamu merasa keputusan harus adil atau mempertimbangkan perasaan semua orang?", "Adil", "Pertimbangkan perasaan"),
+        ("Apakah Kamu lebih sering berpikir objektif atau subjektif?", "Objektif", "Subjektif"),
+        ("Apakah Kamu menilai diri Kamu lebih rasional atau penuh empati?", "Rasional", "Penuh empati"),
+        ("Apakah Kamu cenderung fokus pada hasil atau dampak emosional?", "Hasil", "Dampak emosional"),
+        ("Apakah Kamu merasa nyaman membuat keputusan sulit tanpa terpengaruh emosi?", "Ya", "Tidak"),
     ],
     'JP': [
-        ("Apakah Anda lebih suka memiliki rencana yang jelas atau fleksibilitas?", "Rencana yang jelas", "Fleksibilitas"),
-        ("Apakah Anda menyelesaikan tugas jauh sebelum tenggat atau mendekati akhir?", "Sebelum tenggat", "Mendekati akhir"),
-        ("Apakah Anda merasa terganggu saat rencana berubah tiba-tiba?", "Ya", "Tidak"),
-        ("Apakah Anda lebih produktif dengan jadwal atau spontanitas?", "Jadwal", "Spontanitas"),
-        ("Apakah Anda suka menyelesaikan tugas sebelum bersantai atau sebaliknya?", "Tugas dulu", "Santai dulu"),
-        ("Apakah Anda suka membuat to-do list atau mengikuti alur?", "To-do list", "Mengikuti alur"),
-        ("Apakah Anda merasa nyaman dengan struktur atau fleksibilitas waktu?", "Struktur", "Fleksibilitas"),
-        ("Apakah Anda merasa stres jika sesuatu tidak selesai tepat waktu?", "Ya", "Tidak"),
-        ("Apakah Anda suka menyusun rencana atau spontan menghadapi hari?", "Rencana", "Spontan"),
+        ("Apakah Kamu lebih suka memiliki rencana yang jelas atau fleksibilitas?", "Rencana yang jelas", "Fleksibilitas"),
+        ("Apakah Kamu menyelesaikan tugas jauh sebelum tenggat atau mendekati akhir?", "Sebelum tenggat", "Mendekati akhir"),
+        ("Apakah Kamu merasa terganggu saat rencana berubah tiba-tiba?", "Ya", "Tidak"),
+        ("Apakah Kamu lebih produktif dengan jadwal atau spontanitas?", "Jadwal", "Spontanitas"),
+        ("Apakah Kamu suka menyelesaikan tugas sebelum bersantai atau sebaliknya?", "Tugas dulu", "Santai dulu"),
+        ("Apakah Kamu suka membuat to-do list atau mengikuti alur?", "To-do list", "Mengikuti alur"),
+        ("Apakah Kamu merasa nyaman dengan struktur atau fleksibilitas waktu?", "Struktur", "Fleksibilitas"),
+        ("Apakah Kamu merasa stres jika sesuatu tidak selesai tepat waktu?", "Ya", "Tidak"),
+        ("Apakah Kamu suka menyusun rencana atau spontan menghadapi hari?", "Rencana", "Spontan"),
     ]
 }
 
@@ -94,7 +94,7 @@ if not st.session_state.finished:
 else:
     st.success("Tes selesai!")
     mbti_result = get_mbti_type(st.session_state.scores)
-    st.markdown(f"### Tipe MBTI Anda adalah: **{mbti_result}**")
+    st.markdown(f"### Tipe Kepribadianmu adalah **{mbti_result}**")
 
     formatted_scores = ""
     pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
@@ -103,12 +103,12 @@ else:
 
     st.text("Skor akhir:\n" + formatted_scores)
 
-    phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
+    phone = st.text_input("Masukkan nomor WhatsApp Kamu (format 628xxxxxxxxxx):")
     if phone:
-        message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
+        message = f"Halo! Ini hasil Tes Kepribadianmu : {mbti_result}\nSkor:\n{formatted_scores}"
         encoded_message = message.replace(' ', '%20').replace('\n', '%0A')
         wa_url = f"https://wa.me/{phone}?text={encoded_message}"
-        st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Anda]({wa_url})", unsafe_allow_html=True)
+        st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Kamu]({wa_url})", unsafe_allow_html=True)
 
     if st.button("Ulangi Tes"):
         for key in list(st.session_state.keys()):
