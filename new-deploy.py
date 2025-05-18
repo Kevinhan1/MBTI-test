@@ -57,20 +57,19 @@ def get_mbti_type(final_scores):
     mbti += 'J' if final_scores['J'] > final_scores['P'] else 'P'
     return mbti
 
-# Inisialisasi session_state
+# Initialize session state
 if "scores" not in st.session_state:
-    st.session_state.scores = {k: 0 for k in ['E','I','S','N','F','T','J','P']}
+    st.session_state.scores = {k: 0 for k in ['E','I','S','N','T','F','J','P']}
 
 if "questions" not in st.session_state:
+    # Flatten dan acak semua pertanyaan dari semua dimensi
     st.session_state.questions = []
-    # Ambil semua pertanyaan, acak urutan setiap kategori, lalu gabungkan
     for dichotomy, questions in question_pool.items():
         q_copy = questions.copy()
         random.shuffle(q_copy)
         for q in q_copy:
             st.session_state.questions.append((dichotomy, q))
-
-    random.shuffle(st.session_state.questions)  # Acak semua pertanyaan secara keseluruhan juga
+    random.shuffle(st.session_state.questions)  # Acak seluruh list pertanyaan
 
 if "current" not in st.session_state:
     st.session_state.current = 0
@@ -78,13 +77,16 @@ if "current" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-st.title("Personality Test")
+st.title("Tes MBTI Interaktif")
 
 if not st.session_state.finished:
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
+
+    # Tampilkan radio pilihan, default None (belum pilih)
     pilihan = st.radio(f"**{question}**", (opt1, opt2), key=st.session_state.current)
 
-    if st.button("Lanjut", key="next_btn"):
+    # Jika user sudah pilih opsi, langsung proses dan pindah ke pertanyaan berikutnya
+    if pilihan:
         if pilihan == opt1:
             st.session_state.scores[dichotomy[0]] += 1
         else:
@@ -94,13 +96,15 @@ if not st.session_state.finished:
 
         if st.session_state.current >= len(st.session_state.questions):
             st.session_state.finished = True
+
         st.experimental_rerun()
+
 else:
     st.success("Tes selesai!")
     mbti_result = get_mbti_type(st.session_state.scores)
     st.markdown(f"### Tipe MBTI Anda adalah: **{mbti_result}**")
 
-    # Format skor agar lebih rapi
+    # Tampilkan skor akhir dalam format rapi
     formatted_scores = ""
     pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
     for a, b in pairs:
@@ -108,7 +112,7 @@ else:
 
     st.text("Skor akhir:\n" + formatted_scores)
 
-    # Input nomor WhatsApp
+    # Input nomor WhatsApp untuk kirim hasil
     phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
     if phone:
         message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
