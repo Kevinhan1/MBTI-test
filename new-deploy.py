@@ -1,9 +1,6 @@
 import streamlit as st
 import random
 
-# Threshold untuk menyimpulkan preferensi
-EVIDENCE_THRESHOLD = 5
-
 # Pertanyaan dengan opsi deskriptif
 question_pool = {
     'EI': [
@@ -52,60 +49,66 @@ question_pool = {
     ]
 }
 
-# Inisialisasi session state
+def get_mbti_type(final_scores):
+    mbti = ""
+    mbti += 'E' if final_scores['E'] > final_scores['I'] else 'I'
+    mbti += 'S' if final_scores['S'] > final_scores['N'] else 'N'
+    mbti += 'T' if final_scores['T'] > final_scores['F'] else 'F'
+    mbti += 'J' if final_scores['J'] > final_scores['P'] else 'P'
+    return mbti
+
+# Inisialisasi session_state
 if "scores" not in st.session_state:
-    st.session_state.scores = {'E': 0, 'I': 0, 'S': 0, 'N': 0, 'T': 0, 'F': 0, 'J': 0, 'P': 0}
-    st.session_state.questions = {k: v.copy() for k, v in question_pool.items()}
-    st.session_state.concluded = {'EI': False, 'SN': False, 'TF': False, 'JP': False}
+    st.session_state.scores = {k: 0 for k in ['E','I','S','N','F','T','J','P']}
 
-st.title("Tes MBTI Sederhana")
-st.write("Pilih jawaban yang paling menggambarkan Anda. Sistem akan berhenti saat sudah cukup bukti untuk menentukan MBTI.")
+if "questions" not in st.session_state:
+    st.session_state.questions = []
+    # Ambil semua pertanyaan, acak urutan setiap kategori, lalu gabungkan
+    for dichotomy, questions in question_pool.items():
+        q_copy = questions.copy()
+        random.shuffle(q_copy)
+        for q in q_copy:
+            st.session_state.questions.append((dichotomy, q))
 
-def get_mbti(scores):
-    return ''.join([
-        'E' if scores['E'] > scores['I'] else 'I',
-        'S' if scores['S'] > scores['N'] else 'N',
-        'T' if scores['T'] > scores['F'] else 'F',
-        'J' if scores['J'] > scores['P'] else 'P',
-    ])
+    random.shuffle(st.session_state.questions)  # Acak semua pertanyaan secara keseluruhan juga
 
-if not all(st.session_state.concluded.values()):
-    available = [k for k, v in st.session_state.concluded.items() if not v and st.session_state.questions[k]]
-    if available:
-        dichotomy = random.choice(available)
-        pref1, pref2 = dichotomy[0], dichotomy[1]
-        q_text, opt1, opt2 = st.session_state.questions[dichotomy].pop(0)
+if "current" not in st.session_state:
+    st.session_state.current = 0
 
-        st.subheader(q_text)
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button(opt1, key=f"{dichotomy}_1_{len(st.session_state.questions[dichotomy])}"):
-                st.session_state.scores[pref1] += 1
-                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
-                    st.session_state.concluded[dichotomy] = True
-                st.experimental_rerun()
-        with col2:
-            if st.button(opt2, key=f"{dichotomy}_2_{len(st.session_state.questions[dichotomy])}"):
-                st.session_state.scores[pref2] += 1
-                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
-                    st.session_state.concluded[dichotomy] = True
-                st.experimental_rerun()
-    else:
-        # Jika pertanyaan habis tapi belum conclude, langsung conclude dimensi itu
-        for d in st.session_state.concluded:
-            if not st.session_state.concluded[d]:
-                st.session_state.concluded[d] = True
+if "finished" not in st.session_state:
+    st.session_state.finished = False
+
+st.title("Personality Test")
+
+if not st.session_state.finished:
+    dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
+    pilihan = st.radio(f"**{question}**", (opt1, opt2), key=st.session_state.current)
+
+    if st.button("Lanjut", key="next_btn"):
+        if pilihan == opt1:
+            st.session_state.scores[dichotomy[0]] += 1
+        else:
+            st.session_state.scores[dichotomy[1]] += 1
+
+        st.session_state.current += 1
+
+        if st.session_state.current >= len(st.session_state.questions):
+            st.session_state.finished = True
         st.experimental_rerun()
 else:
-    mbti_result = get_mbti(st.session_state.scores)
-    st.success(f"Tipe MBTI Anda adalah: **{mbti_result}**")
-    
-    # Tampilkan skor rapi
-    pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
-    formatted_scores = "\n".join(f"{a}: {st.session_state.scores[a]}, {b}: {st.session_state.scores[b]}" for a,b in pairs)
-    st.markdown("### Skor Akhir:")
-    st.text(formatted_scores)
+    st.success("Tes selesai!")
+    mbti_result = get_mbti_type(st.session_state.scores)
+    st.markdown(f"### Tipe MBTI Anda adalah: **{mbti_result}**")
 
+    # Format skor agar lebih rapi
+    formatted_scores = ""
+    pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
+    for a, b in pairs:
+        formatted_scores += f"{a}: {st.session_state.scores[a]}, {b}: {st.session_state.scores[b]}\n"
+
+    st.text("Skor akhir:\n" + formatted_scores)
+
+    # Input nomor WhatsApp
     phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
     if phone:
         message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
@@ -114,6 +117,6 @@ else:
         st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Anda]({wa_url})", unsafe_allow_html=True)
 
     if st.button("Ulangi Tes"):
-        for k in list(st.session_state.keys()):
-            del st.session_state[k]
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
         st.experimental_rerun()
