@@ -2,63 +2,61 @@ import streamlit as st
 import random
 
 # Threshold untuk menyimpulkan preferensi
-EVIDENCE_THRESHOLD = 5  # Kamu bisa ubah ini nanti
+EVIDENCE_THRESHOLD = 5
 
-# Pool pertanyaan
-question_pool_data = {
+# Pertanyaan dengan opsi deskriptif
+question_pool = {
     'EI': [
-        ("Apakah Anda merasa berenergi setelah bersosialisasi dengan banyak orang?", "E", "I"),
-        ("Apakah Anda lebih suka berbicara di grup besar atau percakapan satu lawan satu?", "E", "I"),
-        ("Apakah Anda biasanya memulai percakapan dengan orang asing?", "E", "I"),
-        ("Apakah Anda lebih suka berada di tempat ramai daripada menyendiri?", "E", "I"),
-        ("Apakah Anda menikmati menjadi pusat perhatian?", "E", "I"),
-        ("Apakah Anda cenderung bertindak terlebih dahulu lalu berpikir, atau berpikir dulu lalu bertindak?", "E", "I"),
-        ("Ketika sendirian dalam waktu lama, apakah Anda merasa kesepian?", "E", "I"),
-        ("Apakah Anda lebih sering berbicara atau mendengarkan dalam percakapan?", "E", "I"),
-        ("Apakah Anda lebih suka aktivitas kelompok daripada aktivitas individu?", "E", "I"),
+        ("Apakah Anda merasa berenergi setelah bersosialisasi dengan banyak orang?", "Ya, sangat berenergi", "Tidak, merasa lelah"),
+        ("Apakah Anda lebih suka berbicara di grup besar atau percakapan satu lawan satu?", "Grup besar", "Satu lawan satu"),
+        ("Apakah Anda biasanya memulai percakapan dengan orang asing?", "Ya", "Tidak"),
+        ("Apakah Anda lebih suka berada di tempat ramai daripada menyendiri?", "Ya", "Tidak"),
+        ("Apakah Anda menikmati menjadi pusat perhatian?", "Ya", "Tidak"),
+        ("Apakah Anda cenderung bertindak terlebih dahulu lalu berpikir, atau berpikir dulu lalu bertindak?", "Bertindak dahulu", "Berpikir dahulu"),
+        ("Ketika sendirian dalam waktu lama, apakah Anda merasa kesepian?", "Ya", "Tidak"),
+        ("Apakah Anda lebih sering berbicara atau mendengarkan dalam percakapan?", "Berbicara", "Mendengarkan"),
+        ("Apakah Anda lebih suka aktivitas kelompok daripada aktivitas individu?", "Kelompok", "Individu"),
     ],
     'SN': [
-        ("Apakah Anda fokus pada detail atau gambaran besar?", "S", "N"),
-        ("Apakah Anda lebih suka informasi konkret atau ide abstrak?", "S", "N"),
-        ("Apakah Anda cenderung memperhatikan fakta atau kemungkinan?", "S", "N"),
-        ("Apakah Anda lebih suka instruksi langkah demi langkah atau eksplorasi bebas?", "S", "N"),
-        ("Apakah Anda lebih tertarik pada apa yang nyata atau apa yang mungkin?", "S", "N"),
-        ("Apakah Anda menikmati rutinitas atau variasi?", "S", "N"),
-        ("Apakah Anda memercayai hal yang bisa dibuktikan atau ide yang belum terbukti?", "S", "N"),
-        ("Apakah Anda biasanya mendeskripsikan sesuatu secara literal atau menggunakan perbandingan/metafora?", "S", "N"),
-        ("Apakah Anda lebih suka fakta atau teori?", "S", "N"),
+        ("Apakah Anda fokus pada detail atau gambaran besar?", "Detail", "Gambaran besar"),
+        ("Apakah Anda lebih suka informasi konkret atau ide abstrak?", "Konkret", "Abstrak"),
+        ("Apakah Anda cenderung memperhatikan fakta atau kemungkinan?", "Fakta", "Kemungkinan"),
+        ("Apakah Anda lebih suka instruksi langkah demi langkah atau eksplorasi bebas?", "Langkah demi langkah", "Eksplorasi bebas"),
+        ("Apakah Anda lebih tertarik pada apa yang nyata atau apa yang mungkin?", "Yang nyata", "Yang mungkin"),
+        ("Apakah Anda menikmati rutinitas atau variasi?", "Rutinitas", "Variasi"),
+        ("Apakah Anda memercayai hal yang bisa dibuktikan atau ide yang belum terbukti?", "Yang bisa dibuktikan", "Ide yang belum terbukti"),
+        ("Apakah Anda biasanya mendeskripsikan sesuatu secara literal atau menggunakan perbandingan/metafora?", "Literal", "Metafora"),
+        ("Apakah Anda lebih suka fakta atau teori?", "Fakta", "Teori"),
     ],
     'TF': [
-        ("Dalam membuat keputusan, apakah Anda lebih mengandalkan logika atau perasaan?", "T", "F"),
-        ("Apakah Anda lebih menghargai keadilan atau empati?", "T", "F"),
-        ("Apakah Anda merasa nyaman memberi kritik langsung?", "T", "F"),
-        ("Apakah Anda lebih sering menyelesaikan konflik dengan debat atau dengan kompromi?", "T", "F"),
-        ("Apakah Anda merasa keputusan harus adil atau mempertimbangkan perasaan semua orang?", "T", "F"),
-        ("Apakah Anda lebih sering berpikir objektif atau subjektif?", "T", "F"),
-        ("Apakah Anda menilai diri Anda lebih rasional atau penuh empati?", "T", "F"),
-        ("Apakah Anda cenderung fokus pada hasil atau dampak emosional?", "T", "F"),
-        ("Apakah Anda merasa nyaman membuat keputusan sulit tanpa terpengaruh emosi?", "T", "F"),
+        ("Dalam membuat keputusan, apakah Anda lebih mengandalkan logika atau perasaan?", "Logika", "Perasaan"),
+        ("Apakah Anda lebih menghargai keadilan atau empati?", "Keadilan", "Empati"),
+        ("Apakah Anda merasa nyaman memberi kritik langsung?", "Ya", "Tidak"),
+        ("Apakah Anda lebih sering menyelesaikan konflik dengan debat atau dengan kompromi?", "Debat", "Kompromi"),
+        ("Apakah Anda merasa keputusan harus adil atau mempertimbangkan perasaan semua orang?", "Adil", "Pertimbangkan perasaan"),
+        ("Apakah Anda lebih sering berpikir objektif atau subjektif?", "Objektif", "Subjektif"),
+        ("Apakah Anda menilai diri Anda lebih rasional atau penuh empati?", "Rasional", "Penuh empati"),
+        ("Apakah Anda cenderung fokus pada hasil atau dampak emosional?", "Hasil", "Dampak emosional"),
+        ("Apakah Anda merasa nyaman membuat keputusan sulit tanpa terpengaruh emosi?", "Ya", "Tidak"),
     ],
     'JP': [
-        ("Apakah Anda lebih suka memiliki rencana yang jelas atau fleksibilitas?", "J", "P"),
-        ("Apakah Anda menyelesaikan tugas jauh sebelum tenggat atau mendekati akhir?", "J", "P"),
-        ("Apakah Anda merasa terganggu saat rencana berubah tiba-tiba?", "J", "P"),
-        ("Apakah Anda lebih produktif dengan jadwal atau spontanitas?", "J", "P"),
-        ("Apakah Anda suka menyelesaikan tugas sebelum bersantai atau sebaliknya?", "J", "P"),
-        ("Apakah Anda suka membuat to-do list atau mengikuti alur?", "J", "P"),
-        ("Apakah Anda merasa nyaman dengan struktur atau fleksibilitas waktu?", "J", "P"),
-        ("Apakah Anda merasa stres jika sesuatu tidak selesai tepat waktu?", "J", "P"),
-        ("Apakah Anda suka menyusun rencana atau spontan menghadapi hari?", "J", "P"),
+        ("Apakah Anda lebih suka memiliki rencana yang jelas atau fleksibilitas?", "Rencana yang jelas", "Fleksibilitas"),
+        ("Apakah Anda menyelesaikan tugas jauh sebelum tenggat atau mendekati akhir?", "Sebelum tenggat", "Mendekati akhir"),
+        ("Apakah Anda merasa terganggu saat rencana berubah tiba-tiba?", "Ya", "Tidak"),
+        ("Apakah Anda lebih produktif dengan jadwal atau spontanitas?", "Jadwal", "Spontanitas"),
+        ("Apakah Anda suka menyelesaikan tugas sebelum bersantai atau sebaliknya?", "Tugas dulu", "Santai dulu"),
+        ("Apakah Anda suka membuat to-do list atau mengikuti alur?", "To-do list", "Mengikuti alur"),
+        ("Apakah Anda merasa nyaman dengan struktur atau fleksibilitas waktu?", "Struktur", "Fleksibilitas"),
+        ("Apakah Anda merasa stres jika sesuatu tidak selesai tepat waktu?", "Ya", "Tidak"),
+        ("Apakah Anda suka menyusun rencana atau spontan menghadapi hari?", "Rencana", "Spontan"),
     ]
 }
 
 # Inisialisasi session state
 if "scores" not in st.session_state:
     st.session_state.scores = {'E': 0, 'I': 0, 'S': 0, 'N': 0, 'T': 0, 'F': 0, 'J': 0, 'P': 0}
-    st.session_state.questions = {k: v.copy() for k, v in question_pool_data.items()}
+    st.session_state.questions = {k: v.copy() for k, v in question_pool.items()}
     st.session_state.concluded = {'EI': False, 'SN': False, 'TF': False, 'JP': False}
-    st.session_state.current = None
-    st.session_state.result = None
 
 st.title("Tes MBTI Sederhana")
 st.write("Pilih jawaban yang paling menggambarkan Anda. Sistem akan berhenti saat sudah cukup bukti untuk menentukan MBTI.")
@@ -78,32 +76,23 @@ if not all(st.session_state.concluded.values()):
     if available:
         dichotomy = random.choice(available)
         pref1, pref2 = dichotomy[0], dichotomy[1]
-        q = st.session_state.questions[dichotomy].pop(0)
+        q_text, opt1, opt2 = st.session_state.questions[dichotomy].pop(0)
 
-        st.subheader(q[0])
+        st.subheader(q_text)
         col1, col2 = st.columns(2)
-
-        # Deteksi apakah pertanyaan ya/tidak (dimulai dengan "Apakah")
-        is_yes_no_question = q[0].strip().lower().startswith("apakah")
-
-        label1 = "Iya" if is_yes_no_question else q[1]
-        label2 = "Tidak" if is_yes_no_question else q[2]
-
         with col1:
-            if st.button(label1, key="option1"):
-                st.session_state.scores[q[1]] += 1
-                if abs(st.session_state.scores[q[1]] - st.session_state.scores[q[2]]) >= EVIDENCE_THRESHOLD:
+            if st.button(opt1, key="1"):
+                st.session_state.scores[pref1] += 1
+                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
                 st.rerun()
         with col2:
-            if st.button(label2, key="option2"):
-                st.session_state.scores[q[2]] += 1
-                if abs(st.session_state.scores[q[1]] - st.session_state.scores[q[2]]) >= EVIDENCE_THRESHOLD:
+            if st.button(opt2, key="2"):
+                st.session_state.scores[pref2] += 1
+                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
                 st.rerun()
-
     else:
-        # Jika semua pertanyaan habis
         for d in st.session_state.concluded:
             st.session_state.concluded[d] = True
         st.rerun()
@@ -112,9 +101,7 @@ else:
     st.success(f"Tipe MBTI Anda adalah: **{mbti_result}**")
     st.write("Skor akhir:", st.session_state.scores)
 
-    # Input nomor WhatsApp
     phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
-
     if phone:
         message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor: {st.session_state.scores}"
         encoded_message = message.replace(' ', '%20').replace('\n', '%0A')
