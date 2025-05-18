@@ -75,7 +75,7 @@ if "current" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-st.title("Tes MBTI Interaktif")
+st.title("personality types")
 
 if not st.session_state.finished:
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
