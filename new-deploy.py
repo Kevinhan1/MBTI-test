@@ -61,7 +61,6 @@ if "scores" not in st.session_state:
 st.title("Tes MBTI Sederhana")
 st.write("Pilih jawaban yang paling menggambarkan Anda. Sistem akan berhenti saat sudah cukup bukti untuk menentukan MBTI.")
 
-# Fungsi menghitung MBTI
 def get_mbti(scores):
     return ''.join([
         'E' if scores['E'] > scores['I'] else 'I',
@@ -70,7 +69,6 @@ def get_mbti(scores):
         'J' if scores['J'] > scores['P'] else 'P',
     ])
 
-# Proses pertanyaan
 if not all(st.session_state.concluded.values()):
     available = [k for k, v in st.session_state.concluded.items() if not v and st.session_state.questions[k]]
     if available:
@@ -81,29 +79,36 @@ if not all(st.session_state.concluded.values()):
         st.subheader(q_text)
         col1, col2 = st.columns(2)
         with col1:
-            if st.button(opt1, key="1"):
+            if st.button(opt1, key=f"{dichotomy}_1_{len(st.session_state.questions[dichotomy])}"):
                 st.session_state.scores[pref1] += 1
                 if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
-                st.rerun()
+                st.experimental_rerun()
         with col2:
-            if st.button(opt2, key="2"):
+            if st.button(opt2, key=f"{dichotomy}_2_{len(st.session_state.questions[dichotomy])}"):
                 st.session_state.scores[pref2] += 1
                 if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
-                st.rerun()
+                st.experimental_rerun()
     else:
+        # Jika pertanyaan habis tapi belum conclude, langsung conclude dimensi itu
         for d in st.session_state.concluded:
-            st.session_state.concluded[d] = True
-        st.rerun()
+            if not st.session_state.concluded[d]:
+                st.session_state.concluded[d] = True
+        st.experimental_rerun()
 else:
     mbti_result = get_mbti(st.session_state.scores)
     st.success(f"Tipe MBTI Anda adalah: **{mbti_result}**")
-    st.write("Skor akhir:", st.session_state.scores)
+    
+    # Tampilkan skor rapi
+    pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
+    formatted_scores = "\n".join(f"{a}: {st.session_state.scores[a]}, {b}: {st.session_state.scores[b]}" for a,b in pairs)
+    st.markdown("### Skor Akhir:")
+    st.text(formatted_scores)
 
     phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
     if phone:
-        message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor: {st.session_state.scores}"
+        message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
         encoded_message = message.replace(' ', '%20').replace('\n', '%0A')
         wa_url = f"https://wa.me/{phone}?text={encoded_message}"
         st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Anda]({wa_url})", unsafe_allow_html=True)
@@ -111,4 +116,4 @@ else:
     if st.button("Ulangi Tes"):
         for k in list(st.session_state.keys()):
             del st.session_state[k]
-        st.rerun()
+        st.experimental_rerun()
