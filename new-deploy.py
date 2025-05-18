@@ -82,16 +82,23 @@ if not all(st.session_state.concluded.values()):
 
         st.subheader(q[0])
         col1, col2 = st.columns(2)
+
+        # Deteksi apakah pertanyaan ya/tidak (dimulai dengan "Apakah")
+        is_yes_no_question = q[0].strip().lower().startswith("apakah")
+
+        label1 = "Iya" if is_yes_no_question else q[1]
+        label2 = "Tidak" if is_yes_no_question else q[2]
+
         with col1:
-            if st.button("1", key="1"):
-                st.session_state.scores[pref1] += 1
-                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
+            if st.button(label1, key="option1"):
+                st.session_state.scores[q[1]] += 1
+                if abs(st.session_state.scores[q[1]] - st.session_state.scores[q[2]]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
                 st.rerun()
         with col2:
-            if st.button("2", key="2"):
-                st.session_state.scores[pref2] += 1
-                if abs(st.session_state.scores[pref1] - st.session_state.scores[pref2]) >= EVIDENCE_THRESHOLD:
+            if st.button(label2, key="option2"):
+                st.session_state.scores[q[2]] += 1
+                if abs(st.session_state.scores[q[1]] - st.session_state.scores[q[2]]) >= EVIDENCE_THRESHOLD:
                     st.session_state.concluded[dichotomy] = True
                 st.rerun()
 
