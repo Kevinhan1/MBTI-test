@@ -1,7 +1,6 @@
 import streamlit as st
 import random
 
-# Pertanyaan dengan opsi deskriptif
 question_pool = {
     'EI': [
         ("Apakah Anda merasa berenergi setelah bersosialisasi dengan banyak orang?", "Ya, sangat berenergi", "Tidak, merasa lelah"),
@@ -57,19 +56,18 @@ def get_mbti_type(final_scores):
     mbti += 'J' if final_scores['J'] > final_scores['P'] else 'P'
     return mbti
 
-# Initialize session state
+# Inisialisasi session_state
 if "scores" not in st.session_state:
     st.session_state.scores = {k: 0 for k in ['E','I','S','N','T','F','J','P']}
 
 if "questions" not in st.session_state:
-    # Flatten dan acak semua pertanyaan dari semua dimensi
     st.session_state.questions = []
     for dichotomy, questions in question_pool.items():
         q_copy = questions.copy()
-        random.shuffle(q_copy)
+        random.shuffle(q_copy)  # Acak pertanyaan
         for q in q_copy:
             st.session_state.questions.append((dichotomy, q))
-    random.shuffle(st.session_state.questions)  # Acak seluruh list pertanyaan
+    random.shuffle(st.session_state.questions)
 
 if "current" not in st.session_state:
     st.session_state.current = 0
@@ -77,34 +75,35 @@ if "current" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
+def on_answer_change():
+    pilihan = st.session_state.get("jawaban")
+    if pilihan is None:
+        return
+
+    dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
+
+    if pilihan == opt1:
+        st.session_state.scores[dichotomy[0]] += 1
+    else:
+        st.session_state.scores[dichotomy[1]] += 1
+
+    st.session_state.current += 1
+
+    if st.session_state.current >= len(st.session_state.questions):
+        st.session_state.finished = True
+    else:
+        st.session_state.jawaban = None
+
 st.title("Tes MBTI Interaktif")
 
 if not st.session_state.finished:
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
-
-    # Tampilkan radio pilihan, default None (belum pilih)
-    pilihan = st.radio(f"**{question}**", (opt1, opt2), key=st.session_state.current)
-
-    # Jika user sudah pilih opsi, langsung proses dan pindah ke pertanyaan berikutnya
-    if pilihan:
-        if pilihan == opt1:
-            st.session_state.scores[dichotomy[0]] += 1
-        else:
-            st.session_state.scores[dichotomy[1]] += 1
-
-        st.session_state.current += 1
-
-        if st.session_state.current >= len(st.session_state.questions):
-            st.session_state.finished = True
-
-        st.experimental_rerun()
-
+    st.radio(f"**{question}**", options=[opt1, opt2], key="jawaban", on_change=on_answer_change)
 else:
     st.success("Tes selesai!")
     mbti_result = get_mbti_type(st.session_state.scores)
     st.markdown(f"### Tipe MBTI Anda adalah: **{mbti_result}**")
 
-    # Tampilkan skor akhir dalam format rapi
     formatted_scores = ""
     pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
     for a, b in pairs:
@@ -112,7 +111,6 @@ else:
 
     st.text("Skor akhir:\n" + formatted_scores)
 
-    # Input nomor WhatsApp untuk kirim hasil
     phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
     if phone:
         message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
