@@ -65,7 +65,7 @@ if "questions" not in st.session_state:
     st.session_state.questions = []
     for dichotomy, questions in question_pool.items():
         q_copy = questions.copy()
-        random.shuffle(q_copy)  # Acak pertanyaan supaya tiap run beda urutan
+        random.shuffle(q_copy)  # Acak pertanyaan
         for q in q_copy:
             st.session_state.questions.append((dichotomy, q))
 
@@ -75,7 +75,7 @@ if "current" not in st.session_state:
 if "finished" not in st.session_state:
     st.session_state.finished = False
 
-st.title("personality types")
+st.title("Tes MBTI Interaktif")
 
 if not st.session_state.finished:
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
@@ -91,14 +91,28 @@ if not st.session_state.finished:
 
         if st.session_state.current >= len(st.session_state.questions):
             st.session_state.finished = True
-
 else:
     st.success("Tes selesai!")
     mbti_result = get_mbti_type(st.session_state.scores)
     st.markdown(f"### Tipe MBTI Anda adalah: **{mbti_result}**")
-    st.write("Skor akhir:", st.session_state.scores)
 
-    if st.button("Ulang Tes"):
+    # Format skor agar tidak tampil sebagai dict
+    formatted_scores = ""
+    pairs = [('E', 'I'), ('S', 'N'), ('T', 'F'), ('J', 'P')]
+    for a, b in pairs:
+        formatted_scores += f"{a}: {st.session_state.scores[a]}, {b}: {st.session_state.scores[b]}\n"
+
+    st.text("Skor akhir:\n" + formatted_scores)
+
+    # Input nomor WhatsApp
+    phone = st.text_input("Masukkan nomor WhatsApp Anda (format 628xxxxxxxxxx):")
+    if phone:
+        message = f"Halo! Ini hasil tes MBTI Anda: {mbti_result}\nSkor:\n{formatted_scores}"
+        encoded_message = message.replace(' ', '%20').replace('\n', '%0A')
+        wa_url = f"https://wa.me/{phone}?text={encoded_message}"
+        st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Anda]({wa_url})", unsafe_allow_html=True)
+
+    if st.button("Ulangi Tes"):
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        st.experimental_rerun()  # Kalau kamu masih mau pakai rerun di sini, tapi bisa juga tanpa ini
+        st.rerun()
