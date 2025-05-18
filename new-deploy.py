@@ -110,9 +110,7 @@ else:
         wa_url = f"https://wa.me/{phone}?text={encoded_message}"
         st.markdown(f"[Klik di sini untuk kirim hasil ke WhatsApp Anda]({wa_url})", unsafe_allow_html=True)
 
-if st.button("Ulangi Tes"):
-    keys_to_clear = ['scores', 'questions', 'current', 'finished']
-    for key in keys_to_clear:
-        if key in st.session_state:
+    if st.button("Ulangi Tes"):
+        for key in list(st.session_state.keys()):
             del st.session_state[key]
-    st.experimental_rerun()
+        st.experimental_rerun()
