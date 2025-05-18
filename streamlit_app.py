@@ -78,16 +78,27 @@ st.title("🧠 Tes Kepribadian MBTI")
 
 if not st.session_state.finished and st.session_state.current < len(st.session_state.questions):
     dichotomy, (question, opt1, opt2) = st.session_state.questions[st.session_state.current]
-    pilihan = st.radio(f"**{question}**", (opt1, opt2))
-    if st.button("Lanjut"):
-        if pilihan == opt1:
-            st.session_state.scores[dichotomy[0]] += 1
+
+    # Pastikan pilihan radio disimpan di session_state agar tidak hilang saat rerun
+    key_radio = f"answer_{st.session_state.current}"
+    pilihan = st.radio(f"**{question}**", (opt1, opt2), key=key_radio)
+
+    lanjut = st.button("Lanjut")
+    if lanjut:
+        # Validasi pilihan agar tidak error
+        if pilihan is None:
+            st.warning("Silakan pilih salah satu opsi terlebih dahulu.")
         else:
-            st.session_state.scores[dichotomy[1]] += 1
-        st.session_state.current += 1
-        if st.session_state.current >= len(st.session_state.questions):
-            st.session_state.finished = True
-        st.experimental_rerun()
+            # Tambah skor sesuai pilihan
+            if pilihan == opt1:
+                st.session_state.scores[dichotomy[0]] += 1
+            else:
+                st.session_state.scores[dichotomy[1]] += 1
+
+            st.session_state.current += 1
+            if st.session_state.current >= len(st.session_state.questions):
+                st.session_state.finished = True
+            st.experimental_rerun()
 
 elif st.session_state.finished:
     st.success("Tes selesai!")
