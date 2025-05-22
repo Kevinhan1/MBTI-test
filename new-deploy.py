@@ -215,3 +215,7 @@ if st.button("Ulangi Tes"):
     st.session_state.category_scores = {"E/I": 0, "S/N": 0, "T/F": 0, "J/P": 0}
     st.session_state._rerun = True
 
+
+if st.session_state.get("_rerun", False):
+    st.session_state._rerun = False
+    st.experimental_rerun()
