@@ -209,8 +209,9 @@ else:
     for i, job in enumerate(mbti_data[mbti_type]['pekerjaan'], 1):
         st.write(f"{i}. {job}")
 
-    if st.button("Ulangi Tes"):
-        st.session_state.current_q = 0
-        st.session_state.answers = []
-        st.session_state.category_scores = {"E/I": 0, "S/N": 0, "T/F": 0, "J/P": 0}
-        st.experimental_rerun()
+if st.button("Ulangi Tes"):
+    st.session_state.current_q = 0
+    st.session_state.answers = []
+    st.session_state.category_scores = {"E/I": 0, "S/N": 0, "T/F": 0, "J/P": 0}
+    st.session_state._rerun = True
+
