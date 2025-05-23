@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-
+import urllib.parse
 # Daftar pertanyaan MBTI (40 pertanyaan)
 questions = [
     # Extraversion (E) vs Introversion (I) - 10 pertanyaan
@@ -125,8 +125,6 @@ mbti_data = {
 }
 
 threshold = 30.5
-
-# Kategori indeks (start, end)
 categories = {
     "E/I": (0, 10),
     "S/N": (10, 20),
@@ -134,83 +132,104 @@ categories = {
     "J/P": (30, 40),
 }
 
+if "started" not in st.session_state:
+    st.session_state.started = False
+    st.session_state.nama = ""
 if "current_q" not in st.session_state:
     st.session_state.current_q = 0
     st.session_state.answers = []
     st.session_state.category_scores = {"E/I": 0, "S/N": 0, "T/F": 0, "J/P": 0}
+    st.session_state.temp_score = 3
 
 st.title("Tes Kepribadian MBTI")
-st.write("Berikan skor 1-5:")
-st.write("1 = Sangat Tidak Setuju, 5 = Sangat Setuju")
 
-def get_category_for_question(idx):
-    for cat, (start, end) in categories.items():
-        if start <= idx < end:
-            return cat
-    return None
-
-# Fungsi lompat ke pertanyaan pertama kategori berikutnya
-def jump_to_next_category(current_idx):
-    for cat, (start, end) in categories.items():
-        if current_idx < end:
-            # jika current_idx masih di bawah end kategori ini, lompat ke awal kategori berikutnya
-            if current_idx < start:
-                return start
-            else:
-                # lompat ke kategori berikutnya jika ada
-                cat_keys = list(categories.keys())
-                current_cat_idx = cat_keys.index(get_category_for_question(current_idx))
-                if current_cat_idx + 1 < len(cat_keys):
-                    next_cat = cat_keys[current_cat_idx + 1]
-                    return categories[next_cat][0]
-                else:
-                    return 40  # sudah akhir pertanyaan
-    return 40
-
-def advance_question(skor):
-    idx = st.session_state.current_q
-    cat = get_category_for_question(idx)
-    st.session_state.answers.append(skor)
-    st.session_state.category_scores[cat] += skor
-
-    # Cek threshold kategori saat ini
-    if st.session_state.category_scores[cat] >= threshold:
-        # Lompat ke kategori berikutnya
-        next_q = jump_to_next_category(idx)
-        st.session_state.current_q = next_q
-    else:
-        st.session_state.current_q += 1
-
-st.write(f"**Pertanyaan {st.session_state.current_q + 1} dari {len(questions)}**")
-
-if st.session_state.current_q < len(questions):
-    skor = st.slider(questions[st.session_state.current_q], 1, 5, 3, key=f"slider_{st.session_state.current_q}")
-
-if st.button("Pertanyaan Berikutnya"):
-    advance_question(skor)
-    st.session_state.rerun_trigger = True
+# Input nama sebelum mulai
+if not st.session_state.started:
+    st.session_state.nama = st.text_input("Masukkan Nama Anda:")
+    if st.session_state.nama and st.button("Mulai Tes"):
+        st.session_state.started = True
+        st.rerun()
 else:
-    e_score = st.session_state.category_scores["E/I"]
-    s_score = st.session_state.category_scores["S/N"]
-    t_score = st.session_state.category_scores["T/F"]
-    j_score = st.session_state.category_scores["J/P"]
+    st.write("Berikan skor 1-5:")
+    st.write("1 = Sangat Tidak Setuju, 5 = Sangat Setuju")
 
-    ei = "E" if e_score > threshold else "I"
-    sn = "S" if s_score > threshold else "N"
-    tf = "T" if t_score > threshold else "F"
-    jp = "J" if j_score > threshold else "P"
+    def get_category_for_question(idx):
+        for cat, (start, end) in categories.items():
+            if start <= idx < end:
+                return cat
+        return None
 
-    mbti_type = ei + sn + tf + jp
+    def jump_to_next_category(current_idx):
+        for cat, (start, end) in categories.items():
+            if current_idx < end:
+                if current_idx < start:
+                    return start
+                else:
+                    cat_keys = list(categories.keys())
+                    current_cat_idx = cat_keys.index(get_category_for_question(current_idx))
+                    if current_cat_idx + 1 < len(cat_keys):
+                        next_cat = cat_keys[current_cat_idx + 1]
+                        return categories[next_cat][0]
+                    else:
+                        return 40
+        return 40
 
-    st.subheader("Hasil Tes MBTI")
-    st.write(f"**Tipe Kepribadian Anda: {mbti_type}**")
-    st.write(f"**Deskripsi:** {mbti_data[mbti_type]['deskripsi']}")
-    st.write("**Pekerjaan yang Cocok:**")
-    for i, job in enumerate(mbti_data[mbti_type]['pekerjaan'], 1):
-        st.write(f"{i}. {job}")
+    def advance_question():
+        idx = st.session_state.current_q
+        skor = st.session_state.temp_score
+        cat = get_category_for_question(idx)
+        st.session_state.answers.append(skor)
+        st.session_state.category_scores[cat] += skor
 
-if st.button("Ulangi Tes"):
-    st.session_state.current_q = 0
-    st.session_state.answers = []
-    st.session_state.category_scores = {"E/I": 0, "S/N": 0, "T/F": 0, "J/P": 0}
-    st.session_state._rerun = True
+        if st.session_state.category_scores[cat] >= threshold:
+            st.session_state.current_q = jump_to_next_category(idx)
+        else:
+            st.session_state.current_q += 1
+
+    # Menampilkan pertanyaan
+    if st.session_state.current_q < len(questions):
+        st.write(f"**Pertanyaan {st.session_state.current_q + 1} dari {len(questions)}**")
+
+        st.session_state.temp_score = st.slider(
+            questions[st.session_state.current_q], 1, 5, st.session_state.temp_score, key=f"slider_{st.session_state.current_q}"
+        )
+
+        if st.button("Pertanyaan Berikutnya"):
+            advance_question()
+            st.rerun()
+
+    else:
+        # Menampilkan hasil
+        e_score = st.session_state.category_scores["E/I"]
+        s_score = st.session_state.category_scores["S/N"]
+        t_score = st.session_state.category_scores["T/F"]
+        j_score = st.session_state.category_scores["J/P"]
+
+        ei = "E" if e_score > threshold else "I"
+        sn = "S" if s_score > threshold else "N"
+        tf = "T" if t_score > threshold else "F"
+        jp = "J" if j_score > threshold else "P"
+
+        mbti_type = ei + sn + tf + jp
+
+        st.subheader("Hasil Tes MBTI")
+        st.write(f"**Nama:** {st.session_state.nama}")
+        st.write(f"**Tipe Kepribadian Anda: {mbti_type}**")
+        st.write(f"**Deskripsi:** {mbti_data[mbti_type]['deskripsi']}")
+        st.write("**Pekerjaan yang Cocok:**")
+        for i, job in enumerate(mbti_data[mbti_type]['pekerjaan'], 1):
+            st.write(f"{i}. {job}")
+
+        # Input nomor WhatsApp
+        nomor = st.text_input("Masukkan Nomor WhatsApp (contoh: 6281********):")
+
+        if nomor:
+            message = f"Hallo {st.session_state.nama}! Hasil MBTI kamu adalah {mbti_type}.\n\nDeskripsi: {mbti_data[mbti_type]['deskripsi']}\n\nPekerjaan Cocok:\n" + "\n".join(mbti_data[mbti_type]['pekerjaan'])
+            url = f"https://wa.me/{nomor}?text={urllib.parse.quote(message)}"
+            st.markdown(f'<a href="{url}" target="_blank"><button>Kirim Hasil via WhatsApp</button></a>', unsafe_allow_html=True)
+
+        if st.button("Ulangi Tes"):
+            for k in ["started", "current_q", "answers", "category_scores", "temp_score", "nama"]:
+                if k in st.session_state:
+                    del st.session_state[k]
+            st.rerun()
